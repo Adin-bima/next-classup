@@ -1,0 +1,379 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-ts"
+  output   = "generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String  @id @unique @default(cuid())
+  email     String  @unique
+  password  String
+  name      String
+  role      Role    @default(PARENT)
+  school_id String? // optional, if linked to a school
+  school    School?
+
+  teacher Teacher?
+  parent  Parent?
+  student Student? @relation("StudentUser")
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime?
+
+  // Indexes for query optimization
+  @@index([role], name: "idx_user_role")
+  @@index([school_id], name: "idx_user_school_id")
+  @@index([role, school_id], name: "idx_user_role_school_id")
+  // Full-text search index for name field (using B-tree for contains queries)
+  @@index([name], name: "idx_user_name")
+}
+
+enum Role {
+  ADMIN
+  SCHOOL_ADMIN
+  TEACHER
+  PARENT
+}
+
+model School {
+  id             String         @id @unique @default(cuid())
+  name           String
+  address        String?
+  admin_id       String         @unique // link to User (School Admin)
+  admin          User           @relation(fields: [admin_id], references: [id])
+  teachers       Teacher[]
+  students       Student[]
+  classes        Class[]
+  academic_years AcademicYear[]
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  // Indexes for query optimization
+  @@index([admin_id], name: "idx_school_admin_id")
+}
+
+model Teacher {
+  id        String @id @unique @default(cuid())
+  user_id   String @unique
+  user      User   @relation(fields: [user_id], references: [id])
+  school_id String
+  school    School @relation(fields: [school_id], references: [id])
+
+  subjects  Subject[]
+  schedules Schedule[]
+  Exam      Exam[]
+
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  deleted_at DateTime?
+  Behaviour  Behaviour[]
+
+  // Indexes for query optimization
+  @@index([user_id], name: "idx_teacher_user_id")
+  @@index([school_id], name: "idx_teacher_school_id")
+}
+
+model Parent {
+  id       String    @id @unique @default(cuid())
+  user_id  String    @unique
+  user     User      @relation(fields: [user_id], references: [id])
+  children Student[] @relation("StudentParent")
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  // Indexes for query optimization
+  @@index([user_id], name: "idx_parent_user_id")
+}
+
+model Student {
+  id             String @id @unique @default(cuid())
+  gender         Gender
+  student_number String @unique
+  user_id        String @unique
+  user           User   @relation("StudentUser", fields: [user_id], references: [id])
+  school_id      String
+  school         School @relation(fields: [school_id], references: [id])
+
+  class_id String?
+  class    Class?  @relation(fields: [class_id], references: [id])
+
+  parents Parent[] @relation("StudentParent")
+
+  performances Performance[]
+  behaviours   Behaviour[]
+  exams        ExamResult[]
+  attendances  Attendance[]
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  // Indexes for query optimization
+  @@index([user_id], name: "idx_student_user_id")
+  @@index([school_id], name: "idx_student_school_id")
+  @@index([class_id], name: "idx_student_class_id")
+  @@index([student_number], name: "idx_student_number")
+  @@index([school_id, class_id], name: "idx_student_school_class")
+}
+
+model Class {
+  id               String       @id @unique @default(cuid())
+  name             String
+  grade            Int
+  school_id        String
+  academic_year_id String
+  academic_year    AcademicYear @relation(fields: [academic_year_id], references: [id])
+  school           School       @relation(fields: [school_id], references: [id])
+
+  students   Student[]
+  schedules  Schedule[]
+  Exam       Exam[]
+  behaviours Behaviour[]
+
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  deleted_at  DateTime?
+  Performance Performance[]
+
+  // Indexes for query optimization
+  @@index([school_id], name: "idx_class_school_id")
+  @@index([academic_year_id], name: "idx_class_academic_year_id")
+  @@index([school_id, academic_year_id], name: "idx_class_school_year")
+  @@index([grade], name: "idx_class_grade")
+}
+
+model AcademicYear {
+  id         String  @id @unique @default(cuid())
+  year_start Int
+  year_end   Int
+  school_id  String
+  is_current Boolean @default(false)
+  school     School  @relation(fields: [school_id], references: [id])
+  classes    Class[]
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  // Indexes for query optimization
+  @@index([school_id], name: "idx_academic_year_school_id")
+  @@index([is_current], name: "idx_academic_year_is_current")
+  @@index([school_id, is_current], name: "idx_academic_year_school_current")
+  @@index([year_start, year_end], name: "idx_academic_year_period")
+}
+
+model Subject {
+  id         String  @id @unique @default(cuid())
+  name       String
+  teacher_id String
+  teacher    Teacher @relation(fields: [teacher_id], references: [id])
+
+  schedules Schedule[]
+
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  deleted_at  DateTime?
+  Performance Performance[]
+
+  // Indexes for query optimization
+  @@index([teacher_id], name: "idx_subject_teacher_id")
+}
+
+model Schedule {
+  id          String       @id @unique @default(cuid())
+  day_of_week DayOfWeek
+  subject_id  String
+  subject     Subject      @relation(fields: [subject_id], references: [id])
+  teacher_id  String
+  teacher     Teacher      @relation(fields: [teacher_id], references: [id])
+  class_id    String
+  class       Class        @relation(fields: [class_id], references: [id])
+  Attendance  Attendance[]
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  // Indexes for query optimization
+  @@index([subject_id], name: "idx_schedule_subject_id")
+  @@index([teacher_id], name: "idx_schedule_teacher_id")
+  @@index([class_id], name: "idx_schedule_class_id")
+  @@index([day_of_week], name: "idx_schedule_day_of_week")
+  @@index([class_id, day_of_week], name: "idx_schedule_class_day")
+  @@index([teacher_id, day_of_week], name: "idx_schedule_teacher_day")
+}
+
+model Performance {
+  id         String  @id @unique @default(cuid())
+
+  student_id String
+  student    Student @relation(fields: [student_id], references: [id])
+
+  class_id String
+  class    Class  @relation(fields: [class_id], references: [id])
+
+  subject_id String
+  subject    Subject @relation(fields: [subject_id], references: [id])
+
+  score    Float
+  datetime DateTime @default(now())
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  // Indexes for query optimization
+  @@index([student_id], name: "idx_performance_student_id")
+  @@index([class_id], name: "idx_performance_class_id")
+  @@index([subject_id], name: "idx_performance_subject_id")
+  @@index([datetime], name: "idx_performance_datetime")
+  @@index([student_id, class_id], name: "idx_performance_student_class")
+  @@index([student_id, subject_id], name: "idx_performance_student_subject")
+  @@index([class_id, subject_id], name: "idx_performance_class_subject")
+  @@index([student_id, datetime], name: "idx_performance_student_datetime")
+}
+
+model Behaviour {
+  id         String  @id @unique @default(cuid())
+  student_id String
+  student    Student @relation(fields: [student_id], references: [id])
+
+  class_id String
+  class    Class  @relation(fields: [class_id], references: [id])
+
+  teacher_id String
+  teacher    Teacher @relation(fields: [teacher_id], references: [id])
+
+  description String
+  datetime    DateTime @default(now())
+  remark      Remark
+  notes       String?
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  // Indexes for query optimization
+  @@index([student_id], name: "idx_behaviour_student_id")
+  @@index([class_id], name: "idx_behaviour_class_id")
+  @@index([teacher_id], name: "idx_behaviour_teacher_id")
+  @@index([datetime], name: "idx_behaviour_datetime")
+  @@index([remark], name: "idx_behaviour_remark")
+  @@index([student_id, class_id], name: "idx_behaviour_student_class")
+  @@index([student_id, datetime], name: "idx_behaviour_student_datetime")
+  @@index([teacher_id, datetime], name: "idx_behaviour_teacher_datetime")
+}
+
+model Exam {
+  id         String   @id @unique @default(cuid())
+  subject    String
+  datetime   DateTime
+  teacher_id String
+  teacher    Teacher  @relation(fields: [teacher_id], references: [id])
+  class_id   String
+  class      Class    @relation(fields: [class_id], references: [id])
+
+  results ExamResult[]
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  // Indexes for query optimization
+  @@index([teacher_id], name: "idx_exam_teacher_id")
+  @@index([class_id], name: "idx_exam_class_id")
+  @@index([datetime], name: "idx_exam_datetime")
+  @@index([subject], name: "idx_exam_subject")
+  @@index([class_id, datetime], name: "idx_exam_class_datetime")
+  @@index([teacher_id, datetime], name: "idx_exam_teacher_datetime")
+}
+
+model ExamResult {
+  id         String  @id @unique @default(cuid())
+  exam_id    String
+  exam       Exam    @relation(fields: [exam_id], references: [id])
+  student_id String
+  student    Student @relation(fields: [student_id], references: [id])
+  score      Float
+  notes      String?
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  // Indexes for query optimization
+  @@index([exam_id], name: "idx_exam_result_exam_id")
+  @@index([student_id], name: "idx_exam_result_student_id")
+  @@index([score], name: "idx_exam_result_score")
+  @@index([exam_id, student_id], name: "idx_exam_result_exam_student")
+  @@index([student_id, score], name: "idx_exam_result_student_score")
+}
+
+model Attendance {
+  id          String           @id @unique @default(cuid())
+  student_id  String
+  student     Student          @relation(fields: [student_id], references: [id])
+  schedule_id String
+  schedule    Schedule         @relation(fields: [schedule_id], references: [id])
+  status      AttendanceStatus
+  datetime    DateTime         @default(now())
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  // Indexes for query optimization
+  @@index([student_id], name: "idx_attendance_student_id")
+  @@index([schedule_id], name: "idx_attendance_schedule_id")
+  @@index([status], name: "idx_attendance_status")
+  @@index([datetime], name: "idx_attendance_datetime")
+  @@index([student_id, datetime], name: "idx_attendance_student_datetime")
+  @@index([schedule_id, datetime], name: "idx_attendance_schedule_datetime")
+  @@index([student_id, status], name: "idx_attendance_student_status")
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+  SICK
+}
+
+enum DayOfWeek {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum Remark {
+  EXCELLENT
+  GOOD
+  AVERAGE
+  BAD
+  POOR
+}
