@@ -7,6 +7,7 @@
 generator client {
   provider = "prisma-client-ts"
   output   = "generated"
+  classPrefix = ["", "Prisma"]
 }
 
 datasource db {
@@ -15,28 +16,37 @@ datasource db {
 }
 
 model User {
-  id        String  @id @unique @default(cuid())
-  email     String  @unique
-  password  String
-  name      String
-  role      Role    @default(PARENT)
-  school_id String? // optional, if linked to a school
-  school    School?
+  id       String @id @unique @default(cuid())
+  email    String @unique
+  password String
+  name     String
 
-  teacher Teacher?
-  parent  Parent?
-  student Student? @relation("StudentUser")
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  deleted_at DateTime?
+  UserRole   UserRole[]
+  teacher    Teacher[]
+  parent     Parent[]
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  // Full-text search index for name field (using B-tree for contains queries)
+  @@index([name], name: "idx_user_name")
+  @@index([email], name: "idx_user_email")
+}
+
+model UserRole {
+  id       String @id @unique @default(cuid())
+  role     Role
+  user_id  String
+  user     User   @relation(fields: [user_id], references: [id])
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
   // Indexes for query optimization
-  @@index([role], name: "idx_user_role")
-  @@index([school_id], name: "idx_user_school_id")
-  @@index([role, school_id], name: "idx_user_role_school_id")
-  // Full-text search index for name field (using B-tree for contains queries)
-  @@index([name], name: "idx_user_name")
+  @@index([user_id], name: "idx_user_role_user_id")
 }
 
 enum Role {
@@ -47,13 +57,11 @@ enum Role {
 }
 
 model School {
-  id             String         @id @unique @default(cuid())
-  name           String
-  address        String?
-  admin_id       String         @unique // link to User (School Admin)
-  admin          User           @relation(fields: [admin_id], references: [id])
+  id      String  @id @unique @default(cuid())
+  name    String
+  address String?
+
   teachers       Teacher[]
-  students       Student[]
   classes        Class[]
   academic_years AcademicYear[]
 
@@ -62,15 +70,15 @@ model School {
   deleted_at DateTime?
 
   // Indexes for query optimization
-  @@index([admin_id], name: "idx_school_admin_id")
+  UserRole UserRole[]
 }
 
 model Teacher {
   id        String @id @unique @default(cuid())
-  user_id   String @unique
-  user      User   @relation(fields: [user_id], references: [id])
   school_id String
   school    School @relation(fields: [school_id], references: [id])
+  user_id   String
+  user      User   @relation(fields: [user_id], references: [id])
 
   subjects  Subject[]
   schedules Schedule[]
@@ -82,14 +90,15 @@ model Teacher {
   Behaviour  Behaviour[]
 
   // Indexes for query optimization
-  @@index([user_id], name: "idx_teacher_user_id")
   @@index([school_id], name: "idx_teacher_school_id")
+  @@index([user_id], name: "idx_teacher_user_id")
 }
 
 model Parent {
-  id       String    @id @unique @default(cuid())
-  user_id  String    @unique
-  user     User      @relation(fields: [user_id], references: [id])
+  id      String @id @unique @default(cuid())
+  user_id String @unique
+  user    User   @relation(fields: [user_id], references: [id])
+
   children Student[] @relation("StudentParent")
 
   created_at DateTime  @default(now())
@@ -101,18 +110,11 @@ model Parent {
 }
 
 model Student {
-  id             String @id @unique @default(cuid())
-  gender         Gender
-  student_number String @unique
-  user_id        String @unique
-  user           User   @relation("StudentUser", fields: [user_id], references: [id])
-  school_id      String
-  school         School @relation(fields: [school_id], references: [id])
-
-  class_id String?
-  class    Class?  @relation(fields: [class_id], references: [id])
+  id     String @id @unique @default(cuid())
+  gender Gender
 
   parents Parent[] @relation("StudentParent")
+  classes Class[]  @relation("ClassStudent")
 
   performances Performance[]
   behaviours   Behaviour[]
@@ -122,13 +124,6 @@ model Student {
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
-
-  // Indexes for query optimization
-  @@index([user_id], name: "idx_student_user_id")
-  @@index([school_id], name: "idx_student_school_id")
-  @@index([class_id], name: "idx_student_class_id")
-  @@index([student_number], name: "idx_student_number")
-  @@index([school_id, class_id], name: "idx_student_school_class")
 }
 
 model Class {
@@ -139,8 +134,8 @@ model Class {
   academic_year_id String
   academic_year    AcademicYear @relation(fields: [academic_year_id], references: [id])
   school           School       @relation(fields: [school_id], references: [id])
+  students         Student[]    @relation("ClassStudent")
 
-  students   Student[]
   schedules  Schedule[]
   Exam       Exam[]
   behaviours Behaviour[]
@@ -219,7 +214,7 @@ model Schedule {
 }
 
 model Performance {
-  id         String  @id @unique @default(cuid())
+  id String @id @unique @default(cuid())
 
   student_id String
   student    Student @relation(fields: [student_id], references: [id])

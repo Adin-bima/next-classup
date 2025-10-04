@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 
-import { HealthController } from '@/backend/application/controllers/HealthController';
+import { HealthController } from '@/backend/presentation/controllers/HealthController';
 
 /**
  * Basic Health Check Endpoint

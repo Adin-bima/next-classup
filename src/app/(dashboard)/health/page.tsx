@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from 'react';
 
-import { HealthCheckResponse } from '@/backend/application/controllers/HealthController';
+import { HealthCheckResponse } from '@/backend/presentation/controllers/HealthController';
 
 interface BasicHealthResponse {
   status: 'healthy' | 'unhealthy' | 'degraded';

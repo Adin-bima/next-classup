@@ -1,17 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 
-import { IUserRepo } from '@/backend/domain/repo/IUserRepo';
-import { IStudentRepo } from '@/backend/domain/repo/IStudentRepo';
-
 import defaultPrismaClient from '../prisma/prisma-client';
-import { UserPrismaRepo } from '../prisma-repo/UserPrismaRepo';
 import { ConnectionMonitor } from '../prisma/connection-monitor';
-import { StudentPrismaRepo } from '../prisma-repo/StudentPrismaRepo';
 
-export type Repositories = {
-  userRepo: IUserRepo;
-  studentRepo: IStudentRepo;
-};
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type Repositories = {};
 
 export class UnitOfWork {
   private readonly readRepositories: Repositories;
@@ -24,11 +17,8 @@ export class UnitOfWork {
     // Initialize connection monitoring
     this.connectionMonitor = new ConnectionMonitor(prismaClient);
 
-    // Pre-instantiate repositories for better performance
-    this.readRepositories = {
-      userRepo: new UserPrismaRepo(prismaClient),
-      studentRepo: new StudentPrismaRepo(prismaClient),
-    };
+    // TODO: Pre-instantiate repositories for better performance
+    this.readRepositories = {};
   }
 
   /**
@@ -56,8 +46,7 @@ export class UnitOfWork {
     }
     return this.prismaClient.$transaction(async (txClient) => {
       const repositories: Repositories = {
-        userRepo: new UserPrismaRepo(txClient),
-        studentRepo: new StudentPrismaRepo(txClient),
+        // TODO: Pre-instantiate repositories for better performance
       };
 
       return fn(repositories);
