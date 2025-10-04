@@ -29,6 +29,9 @@ restart:
 	make stop
 	make start
 
+dependencies:
+	docker compose exec web npm install
+
 prisma-migrate:
 	docker compose exec web npx prisma migrate dev --name init
 
