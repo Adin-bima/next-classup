@@ -4,4 +4,4 @@ required: true
 description: The bearer token
 schema:
   type: string
-  example: "Bearer <access_token>"
+  example: 'Bearer <access_token>'

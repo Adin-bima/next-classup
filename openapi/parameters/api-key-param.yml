@@ -4,4 +4,4 @@ required: true
 description: The API key
 schema:
   type: string
-  example: "00000000-0000-0000-0000-000000000000"
+  example: '00000000-0000-0000-0000-000000000000'

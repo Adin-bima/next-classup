@@ -7,5 +7,6 @@ public/*
 
 **/.next/*
 next.config.js
+src/core/types/openapi.ts
 
 

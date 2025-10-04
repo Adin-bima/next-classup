@@ -10,18 +10,19 @@ const createPrismaClient = (config: {
   poolTimeout: number;
   logLevel: 'query' | 'info' | 'warn' | 'error';
   enableQueryLogging: boolean;
-}) => new PrismaClient({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL,
+}) =>
+  new PrismaClient({
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL,
+      },
     },
-  },
-  log: [
-    { level: config.logLevel, emit: 'event' },
-    { level: 'error', emit: 'stdout' },
-    { level: 'warn', emit: 'stdout' },
-  ],
-});
+    log: [
+      { level: config.logLevel, emit: 'event' },
+      { level: 'error', emit: 'stdout' },
+      { level: 'warn', emit: 'stdout' },
+    ],
+  });
 
 // Get configuration and validate it
 const config = DatabaseConfigManager.getConfig();
@@ -29,7 +30,9 @@ const validation = DatabaseConfigManager.validateConfig(config);
 
 if (!validation.isValid) {
   console.error('Invalid database configuration:', validation.errors);
-  throw new Error(`Database configuration validation failed: ${validation.errors.join(', ')}`);
+  throw new Error(
+    `Database configuration validation failed: ${validation.errors.join(', ')}`
+  );
 }
 
 if (validation.warnings.length > 0) {

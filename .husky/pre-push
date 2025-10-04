@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-push checks..."
+
+# Run ESLint fix
+echo "📝 Running ESLint fix..."
+npm run lint -- --fix ./src/**/*.{ts,tsx}
+
+# Run Prettier fix
+echo "🎨 Running Prettier fix..."
+npx prettier --write ./src
+
+echo "✅ Pre-push checks completed!"

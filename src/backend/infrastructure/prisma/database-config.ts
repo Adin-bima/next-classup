@@ -12,20 +12,41 @@ export interface DatabaseConfig {
 export class DatabaseConfigManager {
   public static getConfig(): DatabaseConfig {
     const env = process.env.NODE_ENV || 'development';
-    
+
     // Get environment-specific settings
     const baseConfig = this.getEnvironmentConfig(env);
-    
+
     // Override with environment variables if provided
     return {
-      maxConnections: parseInt(process.env.DB_MAX_CONNECTIONS || baseConfig.maxConnections.toString(), 10),
-      connectionTimeout: parseInt(process.env.DB_CONNECTION_TIMEOUT || baseConfig.connectionTimeout.toString(), 10),
-      queryTimeout: parseInt(process.env.DB_QUERY_TIMEOUT || baseConfig.queryTimeout.toString(), 10),
-      poolTimeout: parseInt(process.env.DB_POOL_TIMEOUT || baseConfig.poolTimeout.toString(), 10),
+      maxConnections: parseInt(
+        process.env.DB_MAX_CONNECTIONS || baseConfig.maxConnections.toString(),
+        10
+      ),
+      connectionTimeout: parseInt(
+        process.env.DB_CONNECTION_TIMEOUT ||
+          baseConfig.connectionTimeout.toString(),
+        10
+      ),
+      queryTimeout: parseInt(
+        process.env.DB_QUERY_TIMEOUT || baseConfig.queryTimeout.toString(),
+        10
+      ),
+      poolTimeout: parseInt(
+        process.env.DB_POOL_TIMEOUT || baseConfig.poolTimeout.toString(),
+        10
+      ),
       logLevel: (process.env.DB_LOG_LEVEL as any) || baseConfig.logLevel,
-      enableQueryLogging: process.env.ENABLE_QUERY_LOGGING === 'true' || baseConfig.enableQueryLogging,
-      enableConnectionMonitoring: process.env.ENABLE_CONNECTION_MONITORING === 'true' || baseConfig.enableConnectionMonitoring,
-      healthCheckInterval: parseInt(process.env.HEALTH_CHECK_INTERVAL || baseConfig.healthCheckInterval.toString(), 10),
+      enableQueryLogging:
+        process.env.ENABLE_QUERY_LOGGING === 'true' ||
+        baseConfig.enableQueryLogging,
+      enableConnectionMonitoring:
+        process.env.ENABLE_CONNECTION_MONITORING === 'true' ||
+        baseConfig.enableConnectionMonitoring,
+      healthCheckInterval: parseInt(
+        process.env.HEALTH_CHECK_INTERVAL ||
+          baseConfig.healthCheckInterval.toString(),
+        10
+      ),
     };
   }
 
@@ -42,7 +63,7 @@ export class DatabaseConfigManager {
           enableConnectionMonitoring: true,
           healthCheckInterval: 30000,
         };
-      
+
       case 'staging':
         return {
           maxConnections: 30,
@@ -54,7 +75,7 @@ export class DatabaseConfigManager {
           enableConnectionMonitoring: true,
           healthCheckInterval: 20000,
         };
-      
+
       case 'test':
         return {
           maxConnections: 5,
@@ -66,7 +87,7 @@ export class DatabaseConfigManager {
           enableConnectionMonitoring: false,
           healthCheckInterval: 60000,
         };
-      
+
       default: // development
         return {
           maxConnections: 10,
@@ -86,7 +107,7 @@ export class DatabaseConfigManager {
     environment: 'development' | 'staging' | 'production' = 'development'
   ): DatabaseConfig {
     const baseConfig = this.getEnvironmentConfig(environment);
-    
+
     // Adjust max connections based on expected concurrency
     const adjustedMaxConnections = Math.min(
       baseConfig.maxConnections,
@@ -111,12 +132,16 @@ export class DatabaseConfigManager {
     if (config.maxConnections < 1) {
       errors.push('maxConnections must be at least 1');
     } else if (config.maxConnections > 100) {
-      warnings.push('maxConnections is very high, consider if this is necessary');
+      warnings.push(
+        'maxConnections is very high, consider if this is necessary'
+      );
     }
 
     // Validate timeouts
     if (config.connectionTimeout < 1000) {
-      warnings.push('connectionTimeout is very low, may cause connection failures');
+      warnings.push(
+        'connectionTimeout is very low, may cause connection failures'
+      );
     }
 
     if (config.queryTimeout < 5000) {
@@ -129,7 +154,9 @@ export class DatabaseConfigManager {
 
     // Validate health check interval
     if (config.healthCheckInterval < 10000) {
-      warnings.push('healthCheckInterval is very frequent, may impact performance');
+      warnings.push(
+        'healthCheckInterval is very frequent, may impact performance'
+      );
     }
 
     return {

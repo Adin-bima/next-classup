@@ -20,7 +20,7 @@ export class UserService {
   }
 
   async deleteUser(id: string): Promise<void> {
-    return this.unitOfWork.executeWrite(async ({ userRepo }) => 
+    return this.unitOfWork.executeWrite(async ({ userRepo }) =>
       userRepo.delete(id)
     );
   }
