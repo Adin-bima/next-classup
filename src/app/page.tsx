@@ -1,3 +1,11 @@
+import { Stack, Button } from '@mui/material';
+
 export default function Home() {
-  return <div>Hallo world</div>;
+  return (
+    <Stack>
+      <Button variant="contained" color="primary">
+        Hallo world
+      </Button>
+    </Stack>
+  );
 }
