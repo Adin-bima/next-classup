@@ -1,0 +1,7 @@
+type: string
+enum:
+  - PRESENT
+  - ABSENT
+  - LATE
+  - EXCUSED
+  - SICK

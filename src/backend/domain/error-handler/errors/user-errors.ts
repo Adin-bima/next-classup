@@ -1,69 +1,69 @@
 import { ErrorCategory } from '../ErrorCategory';
 
-export class UserErrors {
-  static notFound = {
+export const userErrors = {
+  notFound: {
     code: 'user.not_found',
     message: 'User not found',
     category: ErrorCategory.NOT_FOUND,
-  };
+  },
 
-  static create = {
+  create: {
     code: 'user.create',
     message: 'User creation failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static update = {
+  update: {
     code: 'user.update',
     message: 'User update failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static delete = {
+  delete: {
     code: 'user.delete',
     message: 'User deletion failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static restore = {
+  restore: {
     code: 'user.restore',
     message: 'User restoration failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static search = {
+  search: {
     code: 'user.search',
     message: 'User search failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static getById = {
+  getById: {
     code: 'user.get_by_id',
     message: 'User get by id failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static createMany = {
+  createMany: {
     code: 'user.create_many',
     message: 'User creation failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static updateMany = {
+  updateMany: {
     code: 'user.update_many',
     message: 'User update failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static deleteMany = {
+  deleteMany: {
     code: 'user.delete_many',
     message: 'User deletion failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static restoreMany = {
+  restoreMany: {
     code: 'user.restore_many',
     message: 'User restoration failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
-}
+  },
+};

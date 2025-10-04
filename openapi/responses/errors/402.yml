@@ -1,0 +1,5 @@
+description: Payment Error
+content:
+  application/json:
+    schema:
+      $ref: ../../schemas/errors/402/response.yml

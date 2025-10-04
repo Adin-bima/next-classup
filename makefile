@@ -7,6 +7,24 @@ stop:
 watch:
 	docker logs -f school-management-web
 
+api-gen:
+	docker compose exec web npx swagger-cli bundle ./openapi/main.yml -o ./openapi/main.bundle.yml
+	docker compose exec web npx openapi-typescript ./openapi/main.bundle.yml -o ./src/core/types/openapi.ts
+
+prepush:
+	make prepush-lint
+	make prepush-format
+
+prepush-lint:
+	npm run lint -- --fix ./src/**/*.{js,ts,tsx}
+	make prepush-format
+
+prepush-format:
+	npx prettier --write ./src
+
+prepush-types:
+	make api-gen
+
 restart:
 	make stop
 	make start

@@ -1,0 +1,11 @@
+type: object
+required:
+  - code
+  - message
+properties:
+  code:
+    type: string
+    example: 'common.payload_too_large'
+  message:
+    type: string
+    example: 'Payload too large'

@@ -1,0 +1,11 @@
+type: object
+required:
+  - code
+  - message
+properties:
+  code:
+    type: string
+    example: 'common.unsupported_media_type'
+  message:
+    type: string
+    example: 'Unsupported media type'

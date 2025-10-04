@@ -1,69 +1,69 @@
 import { ErrorCategory } from '../ErrorCategory';
 
-export class StudentErrors {
-  static notFound = {
+export const studentErrors = {
+  notFound: {
     code: 'student.not_found',
     message: 'Student not found',
     category: ErrorCategory.NOT_FOUND,
-  };
+  },
 
-  static create = {
+  create: {
     code: 'student.create',
     message: 'Student creation failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static update = {
+  update: {
     code: 'student.update',
     message: 'Student update failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static delete = {
+  delete: {
     code: 'student.delete',
     message: 'Student deletion failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static restore = {
+  restore: {
     code: 'student.restore',
     message: 'Student restoration failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static search = {
+  search: {
     code: 'student.search',
     message: 'Student search failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static getById = {
+  getById: {
     code: 'student.get_by_id',
     message: 'Student get by id failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static createMany = {
+  createMany: {
     code: 'student.create_many',
     message: 'Student creation failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static updateMany = {
+  updateMany: {
     code: 'student.update_many',
     message: 'Student update failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static deleteMany = {
+  deleteMany: {
     code: 'student.delete_many',
     message: 'Student deletion failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
+  },
 
-  static restoreMany = {
+  restoreMany: {
     code: 'student.restore_many',
     message: 'Student restoration failed',
     category: ErrorCategory.UNPROCESSABLE_ENTITY,
-  };
-}
+  },
+};

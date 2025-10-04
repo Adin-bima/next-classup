@@ -1,0 +1,7 @@
+name: authorization
+in: header
+required: true
+description: The bearer token
+schema:
+  type: string
+  example: 'Bearer <access_token>'

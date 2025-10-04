@@ -1,0 +1,7 @@
+name: x-org-id
+in: header
+required: true
+description: The organization ID
+schema:
+  type: string
+  example: '00000000-0000-0000-0000-000000000000'

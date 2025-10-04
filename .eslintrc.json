@@ -41,7 +41,6 @@
         "es2021": true
       },
       "rules": {
-        "@typescript-eslint/lines-between-class-members": "off",
         "@typescript-eslint/no-unused-vars": "off",
         "@typescript-eslint/dot-notation": "off",
         "@typescript-eslint/no-implied-eval": "off",
@@ -87,7 +86,14 @@
     "@typescript-eslint/no-use-before-define": 0,
     "@typescript-eslint/ban-ts-comment": 0,
     "@typescript-eslint/no-explicit-any": 0,
-    "@typescript-eslint/lines-between-class-members": 0,
+    "@typescript-eslint/lines-between-class-members": [
+      "error",
+      {
+        "enforce": [
+          { "blankLine": "always", "prev": "method", "next": "method" }
+        ]
+      }
+    ],
     "react/jsx-no-useless-fragment": [
       1,
       {

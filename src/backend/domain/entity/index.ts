@@ -1,14 +1,1 @@
-export { UserEntity, type UserEntityProps } from './UserEntity';
-export { StudentEntity, type StudentEntityProps } from './StudentEntity';
-export { TeacherEntity, type TeacherEntityProps } from './TeacherEntity';
-export { ParentEntity, type ParentEntityProps } from './ParentEntity';
-export { SchoolEntity, type SchoolEntityProps } from './SchoolEntity';
-export { ClassEntity, type ClassEntityProps } from './ClassEntity';
-export { SubjectEntity, type SubjectEntityProps } from './SubjectEntity';
-export { AttendanceEntity, type AttendanceEntityProps } from './AttendanceEntity';
-export { ExamEntity, type ExamEntityProps } from './ExamEntity';
-export { ExamResultEntity, type ExamResultEntityProps } from './ExamResultEntity';
-export { PerformanceEntity, type PerformanceEntityProps } from './PerformanceEntity';
-export { BehaviourEntity, type BehaviourEntityProps } from './BehaviourEntity';
-export { ScheduleEntity, type ScheduleEntityProps } from './ScheduleEntity';
-export { AcademicYearEntity, type AcademicYearEntityProps } from './AcademicYearEntity';
+export * from './UserEntity';

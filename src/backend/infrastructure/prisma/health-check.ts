@@ -1,4 +1,4 @@
-import { UnitOfWork } from '../helper/UnitOfWork';
+import { UnitOfWork } from './UnitOfWork';
 
 export interface HealthCheckResult {
   status: 'healthy' | 'unhealthy' | 'degraded';
@@ -26,15 +26,15 @@ export class DatabaseHealthCheck {
 
   public async performHealthCheck(): Promise<HealthCheckResult> {
     const startTime = Date.now();
-    
+
     try {
       // Test basic connectivity
       const isConnected = await this.unitOfWork.forceHealthCheck();
       const responseTime = Date.now() - startTime;
-      
+
       // Get connection statistics
       const stats = await this.unitOfWork.getDetailedConnectionStats();
-      
+
       // Determine health status
       let status: 'healthy' | 'unhealthy' | 'degraded' = 'healthy';
       const warnings: string[] = [];
@@ -94,9 +94,9 @@ export class DatabaseHealthCheck {
           },
         },
         warnings: warnings.length > 0 ? warnings : undefined,
-        recommendations: recommendations.length > 0 ? recommendations : undefined,
+        recommendations:
+          recommendations.length > 0 ? recommendations : undefined,
       };
-
     } catch (error) {
       return {
         status: 'unhealthy',
@@ -115,12 +115,16 @@ export class DatabaseHealthCheck {
             totalQueries: 0,
           },
         },
-        warnings: [`Health check failed: ${error instanceof Error ? error.message : 'Unknown error'}`],
+        warnings: [
+          `Health check failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        ],
       };
     }
   }
 
-  public async getQuickHealthStatus(): Promise<'healthy' | 'unhealthy' | 'degraded'> {
+  public async getQuickHealthStatus(): Promise<
+    'healthy' | 'unhealthy' | 'degraded'
+  > {
     try {
       const isHealthy = await this.unitOfWork.forceHealthCheck();
       const averageQueryTime = this.unitOfWork.getAverageQueryTime();

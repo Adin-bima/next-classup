@@ -1,0 +1,6 @@
+type: string
+enum:
+  - ADMIN
+  - SCHOOL_ADMIN
+  - TEACHER
+  - PARENT

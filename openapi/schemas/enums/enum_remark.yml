@@ -1,0 +1,7 @@
+type: string
+enum:
+  - EXCELLENT
+  - GOOD
+  - AVERAGE
+  - BAD
+  - POOR

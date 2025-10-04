@@ -1,9 +1,8 @@
 import { EnumRole } from '@/core/enums';
 
 import { UserEntity } from '../entity';
-import { Pagination } from '../common/Pagination';
 import { SortByProps } from '../common/SortByProps';
-import { PaginationProps } from '../common/PaginationProps';
+import { Pagination, PaginationParams } from '../common/Pagination';
 
 export type IUserSearchParams = {
   idsIn?: string[];
@@ -11,7 +10,7 @@ export type IUserSearchParams = {
   rolesIn?: EnumRole[];
   schoolIdsIn?: string[];
   keyword?: string;
-  pagination?: PaginationProps;
+  pagination?: PaginationParams;
   sortBy?: SortByProps<UserEntity>[];
 };
 

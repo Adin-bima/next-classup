@@ -1,0 +1,24 @@
+BadRequestError:
+  $ref: errors/400.yml
+UnauthorizedError:
+  $ref: errors/401.yml
+PaymentError:
+  $ref: errors/402.yml
+ForbiddenError:
+  $ref: errors/403.yml
+NotFoundError:
+  $ref: errors/404.yml
+PayloadTooLargeError:
+  $ref: errors/413.yml
+UnsupportedMediaTypeError:
+  $ref: errors/415.yml
+UnprocessableEntityError:
+  $ref: errors/422.yml
+TooManyRequestsError:
+  $ref: errors/429.yml
+InternalError:
+  $ref: errors/500.yml
+NotImplementedError:
+  $ref: errors/501.yml
+ServiceUnavailableError:
+  $ref: errors/503.yml

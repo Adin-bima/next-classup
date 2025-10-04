@@ -1,0 +1,20 @@
+import { ErrorCategory } from '@/backend/domain/error-handler/ErrorCategory';
+
+export const HTTPErrorCode: Record<keyof typeof ErrorCategory, number> = {
+  UNKNOWN: 500,
+  VALIDATION: 400,
+  AUTHENTICATION: 401,
+  PAYMENT_ERROR: 402,
+  AUTHORIZATION: 403,
+  NOT_FOUND: 404,
+  INTERNAL: 500,
+  SERVICE_UNAVAILABLE: 503,
+  BAD_REQUEST: 400,
+  UNPROCESSABLE_ENTITY: 422,
+  TOO_MANY_REQUESTS: 429,
+  FORBIDDEN: 403,
+  PAYLOAD_TOO_LARGE: 413,
+  UNSUPPORTED_MEDIA_TYPE: 415,
+  UNAUTHORIZED: 401,
+  NOT_IMPLEMENTED: 501,
+};

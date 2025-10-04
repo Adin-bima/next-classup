@@ -1,0 +1,5 @@
+description: Payload Too Large
+content:
+  application/json:
+    schema:
+      $ref: ../../schemas/errors/413/response.yml
