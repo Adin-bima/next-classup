@@ -1,7 +1,7 @@
 import { UserEntity } from '@/backend/domain/entity';
 import { Pagination } from '@/backend/domain/common/Pagination';
 import { IUserSearchParams } from '@/backend/domain/repo/IUserRepo';
-import { UnitOfWork } from '@/backend/infrastructure/helper/UnitOfWork';
+import { UnitOfWork } from '@/backend/infrastructure/prisma/UnitOfWork';
 
 export class UserService {
   constructor(private readonly unitOfWork: UnitOfWork) {}
@@ -33,7 +33,7 @@ export class UserService {
 
   // Read operations - no transactions for better performance
   async getUserById(id: string): Promise<UserEntity> {
-    return this.unitOfWork.executeRead(async ({ userRepo }) =>
+    return this.unitOfWork.execute(async ({ userRepo }) =>
       userRepo.getById(id)
     );
   }
@@ -41,7 +41,7 @@ export class UserService {
   async searchUsers(
     params: IUserSearchParams
   ): Promise<Pagination<UserEntity>> {
-    return this.unitOfWork.executeRead(async ({ userRepo }) =>
+    return this.unitOfWork.execute(async ({ userRepo }) =>
       userRepo.search(params)
     );
   }

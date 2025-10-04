@@ -1,12 +1,12 @@
-import { BackendError } from '../error-handler/BackendError';
-import { SUCCESS_CODE, SUCCESS_MESSAGE } from '../helper/constant';
+import { BackendError } from '../../domain/error-handler/BackendError';
+import { SUCCESS_CODE, SUCCESS_MESSAGE } from '../../domain/helper/constant';
 
 type Props<T> = {
   error?: BackendError;
   data?: T;
 };
 
-export default class HTTPResponse<T> {
+export class HTTPResponse<T> {
   code: string;
   message: string;
   error?: BackendError;

@@ -7,6 +7,10 @@ stop:
 watch:
 	docker logs -f school-management-web
 
+api-gen:
+	docker compose exec web npx swagger-cli bundle ./openapi/main.yml -o ./openapi/main.bundle.yml
+	docker compose exec web npx openapi-typescript ./openapi/main.bundle.yml -o ./src/core/types/openapi.ts
+
 restart:
 	make stop
 	make start

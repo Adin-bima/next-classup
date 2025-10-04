@@ -1,5 +1,5 @@
 import { UnitOfWork } from './UnitOfWork';
-import defaultPrismaClient from '../prisma/prisma-client';
+import defaultPrismaClient from './prisma-client';
 
 /**
  * Singleton manager for UnitOfWork instances

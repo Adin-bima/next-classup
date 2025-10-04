@@ -1,0 +1,11 @@
+ApiKeyParam:
+  $ref: api-key-param.yml
+
+AuthTokenParam:
+  $ref: auth-token-param.yml
+
+OrgIdParam:
+  $ref: org-id-param.yml
+
+ReqIdParam:
+  $ref: req-id-param.yml

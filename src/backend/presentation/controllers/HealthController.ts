@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import { NextResponse } from 'next/server';
 
-import { UnitOfWorkManager } from '@/backend/infrastructure/helper/UnitOfWorkManager';
+import { UnitOfWorkManager } from '@/backend/infrastructure/prisma/UnitOfWorkManager';
 
 export interface HealthCheckResponse {
   status: 'healthy' | 'unhealthy' | 'degraded';

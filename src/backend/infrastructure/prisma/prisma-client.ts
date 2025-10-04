@@ -71,3 +71,4 @@ process.on('SIGTERM', async () => {
 });
 
 export default prismaClient;
+export type ExtendedPrismaClient = typeof prismaClient;

@@ -1,0 +1,51 @@
+summary: Login
+tags:
+  - name: auth
+    description: Authentication
+
+security:
+  - ApiKeyAuth: []
+
+parameters:
+  - $ref: ../../../parameters/req-id-param.yml
+  - $ref: ../../../parameters/api-key-param.yml
+
+requestBody:
+  description: Login request
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: request.yml
+
+responses:
+  "200":
+    description: Success
+    content:
+      application/json:
+        schema:
+          $ref: response.yml
+  "400":
+    $ref: ../../../responses/errors/400.yml
+  "401":
+    $ref: ../../../responses/errors/401.yml
+  "402":
+    $ref: ../../../responses/errors/402.yml
+  "403":
+    $ref: ../../../responses/errors/403.yml
+  "404":
+    $ref: ../../../responses/errors/404.yml
+  "413":
+    $ref: ../../../responses/errors/413.yml
+  "415":
+    $ref: ../../../responses/errors/415.yml
+  "422":
+    $ref: ../../../responses/errors/422.yml
+  "429":
+    $ref: ../../../responses/errors/429.yml
+  "500":
+    $ref: ../../../responses/errors/500.yml
+  "501":
+    $ref: ../../../responses/errors/501.yml
+  "503":
+    $ref: ../../../responses/errors/503.yml

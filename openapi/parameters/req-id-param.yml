@@ -1,0 +1,7 @@
+name: x-req-id
+in: header
+required: true
+description: The request ID
+schema:
+  type: string
+  example: "00000000-0000-0000-0000-000000000000"

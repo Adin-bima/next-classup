@@ -1,0 +1,5 @@
+description: Unsupported Media Type
+content:
+  application/json:
+    schema:
+      $ref: ../../schemas/errors/415/response.yml

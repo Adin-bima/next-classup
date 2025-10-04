@@ -1,0 +1,57 @@
+##                  COMMON SCHEMAS                ##
+
+PaginationReq:
+  $ref: common/pagination-req.yml
+PaginationRes:
+  $ref: common/pagination-res.yml
+Token:
+  $ref: common/token.yml
+
+# AUTH
+AuthLoginReq:
+  $ref: ../operations/auth/login/request.yml
+AuthLoginRes:
+  $ref: ../operations/auth/login/response.yml
+LogoutReq:
+  $ref: ../operations/auth/logout/request.yml
+LogoutRes:
+  $ref: ../operations/auth/logout/response.yml
+
+##                  ENUMS                  ##
+
+EnumGender:
+  $ref: enums/enum-gender.yml
+EnumRole:
+  $ref: enums/enum-role.yml
+EnumAttendanceStatus:
+  $ref: enums/enum-attendance-status.yml
+EnumDayOfWeek:
+  $ref: enums/enum-day-of-week.yml
+EnumRemark:
+  $ref: enums/enum_remark.yml
+
+##                  ERRORS                  ##
+BadRequestError:
+  $ref: errors/400/response.yml
+UnauthorizedError:
+  $ref: errors/401/response.yml
+PaymentError:
+  $ref: errors/402/response.yml
+ForbiddenError:
+  $ref: errors/403/response.yml
+NotFoundError:
+  $ref: errors/404/response.yml
+PayloadTooLargeError:
+  $ref: errors/413/response.yml
+UnsupportedMediaTypeError:
+  $ref: errors/415/response.yml
+UnprocessableEntityError:
+  $ref: errors/422/response.yml
+TooManyRequestsError:
+  $ref: errors/429/response.yml
+InternalError:
+  $ref: errors/500/response.yml
+NotImplementedError:
+  $ref: errors/501/response.yml
+ServiceUnavailableError:
+  $ref: errors/503/response.yml

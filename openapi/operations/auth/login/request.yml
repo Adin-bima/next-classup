@@ -1,0 +1,12 @@
+type: object
+required:
+  - identifier
+  - password
+  - deviceId
+properties:
+  identifier:
+    type: string
+  password:
+    type: string
+  deviceId:
+    type: string

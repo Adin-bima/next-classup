@@ -1,0 +1,586 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Next Class Up API",
+    "version": "1.0.0",
+    "description": "API for Next Class Up"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authentication"
+    },
+    {
+      "name": "users",
+      "description": "User management"
+    }
+  ],
+  "paths": null,
+  "components": {
+    "schemas": {
+      "PaginationReq": {
+        "type": "object",
+        "required": [
+          "page",
+          "limit"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "example": 25
+          }
+        }
+      },
+      "PaginationRes": {
+        "type": "object",
+        "required": [
+          "page",
+          "limit",
+          "count"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "example": 25
+          },
+          "count": {
+            "type": "integer",
+            "example": 100
+          }
+        }
+      },
+      "Token": {
+        "type": "object",
+        "required": [
+          "accessToken",
+          "refreshToken",
+          "idToken"
+        ],
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          },
+          "idToken": {
+            "type": "string"
+          }
+        }
+      },
+      "AuthLoginReq": {
+        "type": "object",
+        "required": [
+          "identifier",
+          "password",
+          "deviceId"
+        ],
+        "properties": {
+          "identifier": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "deviceId": {
+            "type": "string"
+          }
+        }
+      },
+      "AuthLoginRes": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Token"
+          }
+        }
+      },
+      "LogoutReq": {
+        "type": "object",
+        "required": [
+          "deviceId"
+        ],
+        "properties": {
+          "deviceId": {
+            "type": "string"
+          }
+        }
+      },
+      "LogoutRes": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "EnumGender": {
+        "type": "string",
+        "enum": [
+          "MALE",
+          "FEMALE"
+        ]
+      },
+      "EnumRole": {
+        "type": "string",
+        "enum": [
+          "ADMIN",
+          "SCHOOL_ADMIN",
+          "TEACHER",
+          "PARENT"
+        ]
+      },
+      "EnumAttendanceStatus": {
+        "type": "string",
+        "enum": [
+          "PRESENT",
+          "ABSENT",
+          "LATE",
+          "EXCUSED",
+          "SICK"
+        ]
+      },
+      "EnumDayOfWeek": {
+        "type": "string",
+        "enum": [
+          "SUNDAY",
+          "MONDAY",
+          "TUESDAY",
+          "WEDNESDAY",
+          "THURSDAY",
+          "FRIDAY",
+          "SATURDAY"
+        ]
+      },
+      "EnumRemark": {
+        "type": "string",
+        "enum": [
+          "EXCELLENT",
+          "GOOD",
+          "AVERAGE",
+          "BAD",
+          "POOR"
+        ]
+      },
+      "BadRequestError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "common.bad_request"
+          },
+          "message": {
+            "type": "string",
+            "example": "Bad request"
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "common.unauthorized"
+          },
+          "message": {
+            "type": "string",
+            "example": "Unauthorized"
+          }
+        }
+      },
+      "PaymentError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "common.payment_error"
+          },
+          "message": {
+            "type": "string",
+            "example": "Payment error"
+          }
+        }
+      },
+      "ForbiddenError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "common.forbidden"
+          },
+          "message": {
+            "type": "string",
+            "example": "Forbidden"
+          }
+        }
+      },
+      "NotFoundError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "common.not_found"
+          },
+          "message": {
+            "type": "string",
+            "example": "Not found"
+          }
+        }
+      },
+      "PayloadTooLargeError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "common.payload_too_large"
+          },
+          "message": {
+            "type": "string",
+            "example": "Payload too large"
+          }
+        }
+      },
+      "UnsupportedMediaTypeError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "common.unsupported_media_type"
+          },
+          "message": {
+            "type": "string",
+            "example": "Unsupported media type"
+          }
+        }
+      },
+      "UnprocessableEntityError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "common.unprocessable_entity"
+          },
+          "message": {
+            "type": "string",
+            "example": "Unprocessable entity"
+          }
+        }
+      },
+      "TooManyRequestsError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "common.too_many_requests"
+          },
+          "message": {
+            "type": "string",
+            "example": "Too many requests"
+          }
+        }
+      },
+      "InternalError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "common.internal"
+          },
+          "message": {
+            "type": "string",
+            "example": "Internal server error"
+          }
+        }
+      },
+      "NotImplementedError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "common.not_implemented"
+          },
+          "message": {
+            "type": "string",
+            "example": "Not implemented"
+          }
+        }
+      },
+      "ServiceUnavailableError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "common.service_unavailable"
+          },
+          "message": {
+            "type": "string",
+            "example": "Service unavailable"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "ApiKeyParam": {
+        "name": "x-api-key",
+        "in": "header",
+        "required": true,
+        "description": "The API key",
+        "schema": {
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        }
+      },
+      "AuthTokenParam": {
+        "name": "authorization",
+        "in": "header",
+        "required": true,
+        "description": "The bearer token",
+        "schema": {
+          "type": "string",
+          "example": "Bearer <access_token>"
+        }
+      },
+      "OrgIdParam": {
+        "name": "x-org-id",
+        "in": "header",
+        "required": true,
+        "description": "The organization ID",
+        "schema": {
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        }
+      },
+      "ReqIdParam": {
+        "name": "x-req-id",
+        "in": "header",
+        "required": true,
+        "description": "The request ID",
+        "schema": {
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        }
+      }
+    },
+    "responses": {
+      "BadRequestError": {
+        "description": "Bad Request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/BadRequestError"
+            }
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/UnauthorizedError"
+            }
+          }
+        }
+      },
+      "PaymentError": {
+        "description": "Payment Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PaymentError"
+            }
+          }
+        }
+      },
+      "ForbiddenError": {
+        "description": "Forbidden",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ForbiddenError"
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Not Found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/NotFoundError"
+            }
+          }
+        }
+      },
+      "PayloadTooLargeError": {
+        "description": "Payload Too Large",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PayloadTooLargeError"
+            }
+          }
+        }
+      },
+      "UnsupportedMediaTypeError": {
+        "description": "Unsupported Media Type",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/UnsupportedMediaTypeError"
+            }
+          }
+        }
+      },
+      "UnprocessableEntityError": {
+        "description": "Unprocessable Entity",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/UnprocessableEntityError"
+            }
+          }
+        }
+      },
+      "TooManyRequestsError": {
+        "description": "Too Many Requests",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/TooManyRequestsError"
+            }
+          }
+        }
+      },
+      "InternalError": {
+        "description": "Internal Server Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/InternalError"
+            }
+          }
+        }
+      },
+      "NotImplementedError": {
+        "description": "Not Implemented",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/NotImplementedError"
+            }
+          }
+        }
+      },
+      "ServiceUnavailableError": {
+        "description": "Service Unavailable",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ServiceUnavailableError"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "name": "x-api-key",
+        "in": "header"
+      },
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT",
+        "description": "The bearer token"
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    },
+    {
+      "BearerAuth": []
+    }
+  ]
+}

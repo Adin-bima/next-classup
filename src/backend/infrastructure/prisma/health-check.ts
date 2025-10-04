@@ -1,4 +1,4 @@
-import { UnitOfWork } from '../helper/UnitOfWork';
+import { UnitOfWork } from './UnitOfWork';
 
 export interface HealthCheckResult {
   status: 'healthy' | 'unhealthy' | 'degraded';

@@ -1,0 +1,28 @@
+openapi: 3.0.3
+info:
+  title: Next Class Up API
+  version: 1.0.0
+  description: API for Next Class Up
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: auth
+    description: Authentication
+  - name: users
+    description: User management
+
+paths:
+
+components:
+  schemas:
+    $ref: schemas/main.yml
+  parameters:
+    $ref: parameters/main.yml
+  responses:
+    $ref: responses/main.yml
+  securitySchemes:
+    $ref: security/main.yml
+
+security:
+  - ApiKeyAuth: []
+  - BearerAuth: []

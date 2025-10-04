@@ -1,0 +1,11 @@
+type: object
+required:
+  - page
+  - limit
+properties:
+  page:
+    type: integer
+    example: 1
+  limit:
+    type: integer
+    example: 25

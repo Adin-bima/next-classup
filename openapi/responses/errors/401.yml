@@ -1,0 +1,5 @@
+description: Unauthorized
+content:
+  application/json:
+    schema:
+      $ref: ../../schemas/errors/401/response.yml

@@ -7,7 +7,6 @@
 generator client {
   provider = "prisma-client-ts"
   output   = "generated"
-  classPrefix = ["", "Prisma"]
 }
 
 datasource db {
@@ -16,21 +15,103 @@ datasource db {
 }
 
 model User {
-  id       String @id @unique @default(cuid())
-  email    String @unique
+  id String @id @unique @default(cuid())
+
+  // mandatory
+  username String  @unique
+  email    String  @unique
+  phone    String? @unique
   password String
   name     String
+  gender   Gender
 
-  created_at DateTime   @default(now())
-  updated_at DateTime   @updatedAt
+  // timestamps
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   deleted_at DateTime?
-  UserRole   UserRole[]
-  teacher    Teacher[]
-  parent     Parent[]
+
+  // relations
+  user_roles                UserRole[]
+  teacher                   Teacher[]
+  parent                    Parent[]
+  sessions                  Session[]
+  refresh_tokens            RefreshToken[]
+  password_reset_tokens     PasswordResetToken[]
+  email_verification_tokens EmailVerificationToken[]
 
   // Full-text search index for name field (using B-tree for contains queries)
   @@index([name], name: "idx_user_name")
   @@index([email], name: "idx_user_email")
+  @@index([phone], name: "idx_user_phone")
+  @@index([gender], name: "idx_user_gender")
+}
+
+model Session {
+  id String @id @default(cuid())
+
+  // mandatory
+  userId     String
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token      String  @unique
+  user_agent String?
+  ip_address String?
+  is_active  Boolean @default(true)
+
+  // timestamps
+  expires_at DateTime
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([userId], name: "idx_session_user_id")
+  @@index([token], name: "idx_session_token")
+  @@index([expires_at], name: "idx_session_expires_at")
+  @@index([is_active], name: "idx_session_is_active")
+}
+
+model RefreshToken {
+  id         String  @id @default(cuid())
+  userId     String
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token      String  @unique
+  is_revoked Boolean @default(false)
+
+  expires_at DateTime
+  created_at DateTime @default(now())
+
+  @@index([userId], name: "idx_refresh_token_user_id")
+  @@index([token], name: "idx_refresh_token_token")
+  @@index([expires_at], name: "idx_refresh_token_expires_at")
+  @@index([is_revoked], name: "idx_refresh_token_is_revoked")
+}
+
+model PasswordResetToken {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token      String   @unique
+  expires_at DateTime
+  created_at DateTime @default(now())
+  is_used    Boolean  @default(false)
+
+  @@index([userId], name: "idx_password_reset_user_id")
+  @@index([token], name: "idx_password_reset_token")
+  @@index([expires_at], name: "idx_password_reset_expires_at")
+  @@index([is_used], name: "idx_password_reset_is_used")
+}
+
+model EmailVerificationToken {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token      String   @unique
+  expires_at DateTime
+  created_at DateTime @default(now())
+  is_used    Boolean  @default(false)
+
+  @@index([userId], name: "idx_email_verification_user_id")
+  @@index([token], name: "idx_email_verification_token")
+  @@index([expires_at], name: "idx_email_verification_expires_at")
+  @@index([is_used], name: "idx_email_verification_is_used")
 }
 
 model UserRole {
@@ -41,12 +122,15 @@ model UserRole {
   schoolId String
   school   School @relation(fields: [schoolId], references: [id])
 
+  // timestamps
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
   // Indexes for query optimization
   @@index([user_id], name: "idx_user_role_user_id")
+  @@index([schoolId], name: "idx_user_role_school_id")
+  @@index([role], name: "idx_user_role_role")
 }
 
 enum Role {
@@ -69,8 +153,11 @@ model School {
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
+  // relations
+  user_roles UserRole[]
+
   // Indexes for query optimization
-  UserRole UserRole[]
+  @@index([name], name: "idx_school_name")
 }
 
 model Teacher {
@@ -80,18 +167,19 @@ model Teacher {
   user_id   String
   user      User   @relation(fields: [user_id], references: [id])
 
-  subjects  Subject[]
-  schedules Schedule[]
-  Exam      Exam[]
+  subjects   Subject[]
+  schedules  Schedule[]
+  exams      Exam[]
+  behaviours Behaviour[]
 
-  created_at DateTime    @default(now())
-  updated_at DateTime    @updatedAt
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   deleted_at DateTime?
-  Behaviour  Behaviour[]
 
   // Indexes for query optimization
   @@index([school_id], name: "idx_teacher_school_id")
   @@index([user_id], name: "idx_teacher_user_id")
+  @@index([school_id, user_id], name: "idx_teacher_school_user")
 }
 
 model Parent {
@@ -110,8 +198,7 @@ model Parent {
 }
 
 model Student {
-  id     String @id @unique @default(cuid())
-  gender Gender
+  id String @id @unique @default(cuid())
 
   parents Parent[] @relation("StudentParent")
   classes Class[]  @relation("ClassStudent")
@@ -136,14 +223,16 @@ model Class {
   school           School       @relation(fields: [school_id], references: [id])
   students         Student[]    @relation("ClassStudent")
 
-  schedules  Schedule[]
-  Exam       Exam[]
-  behaviours Behaviour[]
+  // timestamps
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
 
-  created_at  DateTime      @default(now())
-  updated_at  DateTime      @updatedAt
-  deleted_at  DateTime?
-  Performance Performance[]
+  // relations
+  performances Performance[]
+  schedules    Schedule[]
+  exams        Exam[]
+  behaviours   Behaviour[]
 
   // Indexes for query optimization
   @@index([school_id], name: "idx_class_school_id")
@@ -178,12 +267,13 @@ model Subject {
   teacher_id String
   teacher    Teacher @relation(fields: [teacher_id], references: [id])
 
-  schedules Schedule[]
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
 
-  created_at  DateTime      @default(now())
-  updated_at  DateTime      @updatedAt
-  deleted_at  DateTime?
-  Performance Performance[]
+  // relations
+  performances Performance[]
+  schedules    Schedule[]
 
   // Indexes for query optimization
   @@index([teacher_id], name: "idx_subject_teacher_id")
@@ -198,8 +288,11 @@ model Schedule {
   teacher     Teacher      @relation(fields: [teacher_id], references: [id])
   class_id    String
   class       Class        @relation(fields: [class_id], references: [id])
-  Attendance  Attendance[]
 
+  // relations
+  attendances Attendance[]
+
+  // timestamps
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?

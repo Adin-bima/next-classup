@@ -1,0 +1,11 @@
+type: object
+required:
+  - code
+  - message
+properties:
+  code:
+    type: string
+    example: 'common.unprocessable_entity'
+  message:
+    type: string
+    example: 'Unprocessable entity'

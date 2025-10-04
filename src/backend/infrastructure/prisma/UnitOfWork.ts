@@ -1,13 +1,26 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 
-import defaultPrismaClient from '../prisma/prisma-client';
-import { ConnectionMonitor } from '../prisma/connection-monitor';
+import { IUserRepo } from '@/backend/domain/repo/IUserRepo';
+
+import defaultPrismaClient from './prisma-client';
+import { ConnectionMonitor } from './connection-monitor';
+import { UserPrismaRepo } from '../prisma-repo/UserPrismaRepo';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type Repositories = {};
+export type Repositories = {
+  userRepo: IUserRepo;
+};
+
+function getRepositories(
+  prismaClient: PrismaClient | Prisma.TransactionClient
+): Repositories {
+  return {
+    userRepo: new UserPrismaRepo(prismaClient),
+  };
+}
 
 export class UnitOfWork {
-  private readonly readRepositories: Repositories;
+  private readonly mainRepositories: Repositories;
   private readonly connectionMonitor: ConnectionMonitor;
   private destroyed = false;
 
@@ -18,20 +31,18 @@ export class UnitOfWork {
     this.connectionMonitor = new ConnectionMonitor(prismaClient);
 
     // TODO: Pre-instantiate repositories for better performance
-    this.readRepositories = {};
+    this.mainRepositories = getRepositories(prismaClient);
   }
 
   /**
    * Execute read-only operations without transactions
    * Optimized for performance with pre-instantiated repositories
    */
-  async executeRead<T>(
-    fn: (repositories: Repositories) => Promise<T>
-  ): Promise<T> {
+  async execute<T>(fn: (repositories: Repositories) => Promise<T>): Promise<T> {
     if (this.destroyed) {
       throw new Error('UnitOfWork has been destroyed');
     }
-    return fn(this.readRepositories);
+    return fn(this.mainRepositories);
   }
 
   /**
@@ -45,9 +56,7 @@ export class UnitOfWork {
       throw new Error('UnitOfWork has been destroyed');
     }
     return this.prismaClient.$transaction(async (txClient) => {
-      const repositories: Repositories = {
-        // TODO: Pre-instantiate repositories for better performance
-      };
+      const repositories: Repositories = getRepositories(txClient);
 
       return fn(repositories);
     });
@@ -61,14 +70,6 @@ export class UnitOfWork {
     fn: (repositories: Repositories) => Promise<T>
   ): Promise<T> {
     return this.executeWrite(fn);
-  }
-
-  /**
-   * Legacy method for backward compatibility
-   * @deprecated Use executeRead or executeWrite instead
-   */
-  async execute<T>(fn: (repositories: Repositories) => Promise<T>): Promise<T> {
-    return this.executeRead(fn);
   }
 
   /**
