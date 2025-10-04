@@ -39,6 +39,9 @@ prisma-all:
 	make prisma-generate
 	make prisma-migrate
 
+prisma-reset:
+	docker compose exec web npx prisma migrate reset
+
 prisma-studio:
 	docker compose exec web npx prisma studio
 
